@@ -40,11 +40,10 @@ const displayModule = (function () {
 
   const roundTemp = (temp) => {
     let roundedTemp = temp.toString()
-    const stringifiedTemp = temp.toString()
     if (roundedTemp.includes('.')) {
-      const decPIndex = stringifiedTemp.indexOf('.')
+      const decPIndex = roundedTemp.indexOf('.')
       const stopPoint = decPIndex + 2
-      const tempToOneDecP = stringifiedTemp.slice(0, stopPoint)
+      const tempToOneDecP = roundedTemp.slice(0, stopPoint)
       roundedTemp = tempToOneDecP.slice(0, decPIndex)
       if (tempToOneDecP[tempToOneDecP.length - 1] >= 5) {
         roundedTemp++
