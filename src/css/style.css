@@ -1,0 +1,93 @@
+* {
+  font-family: 'Open Sans';
+  font-size: 16px;
+}
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #28282a;
+  color: #f9f9f9;
+  font-family: 'Open Sans';
+  font-size: 16px;
+}
+
+.container {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  background-color: #323234;
+  border: solid 1px #3c3c3e;
+}
+
+/*Info*/
+
+#main-info {
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 32px;
+  background-color: #28282a;
+  border-radius: 8px;
+  margin-top: 100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.main-info {
+}
+
+.main-info:first-of-type {
+  margin-top: 0;
+}
+
+#city {
+  font-size: 20px;
+}
+
+#description {
+  font-size: 14px;
+  color: #e0e0e0;
+  margin-top: 8px;
+}
+
+#temp {
+  font-size: 80px;
+  margin-top: 2px;
+}
+
+/*User Input*/
+
+#location-input {
+  position: absolute;
+  width: max-content;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#location-input input,
+#location-input button {
+  border: none;
+  outline: none;
+  padding: 8px;
+  background-color: #28282a;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #f9f9f9;
+}
+
+#location-input button:hover {
+  cursor: pointer;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../assets/fonts/OpenSans-Regular.ttf');
+}
