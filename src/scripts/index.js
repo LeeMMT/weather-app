@@ -4,6 +4,11 @@ import '../css/style.css'
 const dataModule = (function () {
   let city = 'Torquay'
 
+  const getCurrentHour = () => {
+    const date = new Date()
+    return date.getHours()
+  }
+
   const setCity = (cityName) => {
     city = cityName
   }
@@ -23,12 +28,14 @@ const dataModule = (function () {
     return data.name
   }
 
+  const getHourlyTemp = async () => {}
+
   const getCurrentTemp = async () => {
     const data = await getCurrentWeather()
     return data.main.temp
   }
 
-  return { setCity, getCityName, getCurrentTemp }
+  return { getCurrentHour, setCity, getCityName, getHourlyTemp, getCurrentTemp }
 })()
 
 const displayModule = (function () {
@@ -39,17 +46,7 @@ const displayModule = (function () {
   const submitBtn = document.querySelector('#location-input button')
 
   const roundTemp = (temp) => {
-    let roundedTemp = temp.toString()
-    if (roundedTemp.includes('.')) {
-      const decPIndex = roundedTemp.indexOf('.')
-      const stopPoint = decPIndex + 2
-      const tempToOneDecP = roundedTemp.slice(0, stopPoint)
-      roundedTemp = tempToOneDecP.slice(0, decPIndex)
-      if (tempToOneDecP[tempToOneDecP.length - 1] >= 5) {
-        roundedTemp++
-      }
-    }
-    return roundedTemp
+    return Math.floor(temp)
   }
 
   const displayCity = async () => {
@@ -59,16 +56,58 @@ const displayModule = (function () {
   const displayCurrentTemp = async () => {
     let tempData = await dataModule.getCurrentTemp()
     tempData = roundTemp(tempData)
-    temp.textContent = tempData + '°'
+    return tempData + '°'
   }
 
-  const displayAllData = function () {
-    displayCity(dataModule.readCurrentCity())
+  const populateHourlyForecast = async () => {
+    const d = new Date()
+    const currentHour = d.getHours()
+    document.querySelector('#hourly').innerHTML = ''
+
+    const hourlyDiv = document.createElement('div')
+    hourlyDiv.classList.add('hour')
+
+    const time = document.createElement('p')
+    time.textContent = 'Now'
+
+    const icon = document.createElement('i')
+    const temp = document.createElement('p')
+    temp.textContent = await displayCurrentTemp()
+
+    hourlyDiv.appendChild(time)
+    hourlyDiv.appendChild(temp)
+
+    document.querySelector('#hourly').appendChild(hourlyDiv)
+
+    for (let i = currentHour + 1; i < currentHour + 25; i++) {
+      const hourlyDiv = document.createElement('div')
+      hourlyDiv.classList.add('hourly')
+
+      const time = document.createElement('p')
+      time.textContent = i
+
+      const icon = document.createElement('i')
+
+      const temp = document.createElement('p')
+      temp.textContent = await displayCurrentTemp()
+
+      hourlyDiv.appendChild(time)
+      hourlyDiv.appendChild(temp)
+
+      document.querySelector('#hourly').appendChild(hourlyDiv)
+    }
+  }
+
+  const displayAllData = async function () {
+    displayCity()
+    temp.textContent = await displayCurrentTemp()
+    populateHourlyForecast()
+    dataModule.getHourlyTemp()
   }
 
   submitBtn.addEventListener('click', () => {
     dataModule.setCity(inputEl.value)
-    displayCity()
-    displayCurrentTemp()
+    displayAllData()
+    console.log(dataModule.getCurrentTemp())
   })
 })()

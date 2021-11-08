@@ -25,7 +25,7 @@ body {
   border: solid 1px #3c3c3e;
 }
 
-/*Info*/
+/*Main Info*/
 
 #main-info {
   width: max-content;
@@ -38,9 +38,6 @@ body {
   margin-top: 100px;
   margin-left: auto;
   margin-right: auto;
-}
-
-.main-info {
 }
 
 .main-info:first-of-type {
@@ -60,6 +57,19 @@ body {
 #temp {
   font-size: 80px;
   margin-top: 2px;
+}
+
+/*Hourly Forecast*/
+
+#hourly {
+  width: 100%;
+  height: max-content;
+  display: flex;
+}
+
+.hour {
+  display: flex;
+  flex-direction: column;
 }
 
 /*User Input*/
