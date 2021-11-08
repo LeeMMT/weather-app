@@ -4,6 +4,9 @@ import '../css/style.css'
 const dataModule = (function () {
   let city = 'Torquay'
 
+  let hourlyData = []
+  let currentData = []
+
   const getCurrentHour = () => {
     const date = new Date()
     return date.getHours()
@@ -13,7 +16,11 @@ const dataModule = (function () {
     city = cityName
   }
 
-  function getCurrentWeather() {
+  const getCityName = () => {
+    return currentData[0].name
+  }
+
+  const getCurrentWeather = () => {
     return new Promise(function (resolve, reject) {
       const location = city
       fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=0b29ad316ae11908404dc3cdb8577d9d`, { mode: 'cors' })
@@ -23,19 +30,30 @@ const dataModule = (function () {
     })
   }
 
-  const getCityName = async () => {
-    const data = await getCurrentWeather()
-    return data.name
+  const storeCurrentWeather = async () => {
+    currentData[0] = await getCurrentWeather()
+    console.log(currentData)
   }
 
-  const getHourlyTemp = async () => {}
-
-  const getCurrentTemp = async () => {
-    const data = await getCurrentWeather()
-    return data.main.temp
+  const getCurrentTemp = () => {
+    return currentData[0].main.temp
   }
 
-  return { getCurrentHour, setCity, getCityName, getHourlyTemp, getCurrentTemp }
+  const storeHourlyTemp = async () => {
+    const lat = currentData[0].coord.lat
+    const lon = currentData[0].coord.lon
+    const rawData = await fetch(
+      `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=current,minutely,daily,alerts&appid=0b29ad316ae11908404dc3cdb8577d9d`,
+    )
+    hourlyData = await rawData.json()
+    await console.log(hourlyData)
+  }
+
+  const getHourlyTemp = (index) => {
+    return hourlyData.hourly[index]
+  }
+
+  return { getCurrentHour, setCity, getCurrentWeather, getCityName, storeHourlyTemp, getCurrentTemp, getHourlyTemp, storeCurrentWeather, currentData }
 })()
 
 const displayModule = (function () {
@@ -49,65 +67,81 @@ const displayModule = (function () {
     return Math.floor(temp)
   }
 
-  const displayCity = async () => {
-    city.textContent = await dataModule.getCityName()
+  const displayCity = () => {
+    city.textContent = dataModule.getCityName()
   }
 
-  const displayCurrentTemp = async () => {
-    let tempData = await dataModule.getCurrentTemp()
+  const displayHourlyTemp = (index) => {
+    let tempData = dataModule.getHourlyTemp(index).temp
     tempData = roundTemp(tempData)
     return tempData + '°'
   }
 
-  const populateHourlyForecast = async () => {
+  const displayCurrentTemp = () => {
+    let tempData = dataModule.getCurrentTemp()
+    tempData = roundTemp(tempData)
+    return tempData + '°'
+  }
+
+  const populateHourlyForecast = () => {
+    const hourlyForecast = document.querySelector('#hourly-forecast')
+    const hourlyContainer = document.createElement('div')
+    hourlyContainer.classList.add('hourly-container')
+    if (hourlyForecast.childElement) hourlyForecast.childElement.innerHTML = '' // Wipes old hourly forecast data from DOM
+
     const d = new Date()
     const currentHour = d.getHours()
-    document.querySelector('#hourly').innerHTML = ''
 
-    const hourlyDiv = document.createElement('div')
-    hourlyDiv.classList.add('hour')
+    const hourlyNowDiv = document.createElement('div')
+    hourlyNowDiv.classList.add('hour')
 
     const time = document.createElement('p')
     time.textContent = 'Now'
 
     const icon = document.createElement('i')
+
     const temp = document.createElement('p')
-    temp.textContent = await displayCurrentTemp()
+    temp.textContent = displayCurrentTemp()
 
-    hourlyDiv.appendChild(time)
-    hourlyDiv.appendChild(temp)
+    hourlyNowDiv.appendChild(time)
+    hourlyNowDiv.appendChild(temp)
+    hourlyContainer.appendChild(hourlyNowDiv)
 
-    document.querySelector('#hourly').appendChild(hourlyDiv)
+    let hour = currentHour + 1
 
-    for (let i = currentHour + 1; i < currentHour + 25; i++) {
+    for (let i = 1; i < 26; i++) {
       const hourlyDiv = document.createElement('div')
-      hourlyDiv.classList.add('hourly')
+      hourlyDiv.classList.add('hour')
 
       const time = document.createElement('p')
-      time.textContent = i
+      time.textContent = hour
 
       const icon = document.createElement('i')
 
       const temp = document.createElement('p')
-      temp.textContent = await displayCurrentTemp()
+      temp.textContent = displayHourlyTemp(i)
 
       hourlyDiv.appendChild(time)
       hourlyDiv.appendChild(temp)
 
-      document.querySelector('#hourly').appendChild(hourlyDiv)
+      hourlyContainer.appendChild(hourlyDiv)
+
+      hour++
     }
+    hourlyForecast.appendChild(hourlyContainer)
   }
 
-  const displayAllData = async function () {
+  const displayAllData = async () => {
     displayCity()
     temp.textContent = await displayCurrentTemp()
     populateHourlyForecast()
-    dataModule.getHourlyTemp()
+    //dataModule.getHourlyTemp()
   }
 
-  submitBtn.addEventListener('click', () => {
+  submitBtn.addEventListener('click', async () => {
     dataModule.setCity(inputEl.value)
+    await dataModule.storeCurrentWeather()
+    await dataModule.storeHourlyTemp()
     displayAllData()
-    console.log(dataModule.getCurrentTemp())
   })
 })()

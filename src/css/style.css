@@ -61,7 +61,11 @@ body {
 
 /*Hourly Forecast*/
 
-#hourly {
+#hourly-forecast {
+  width: 100%;
+}
+
+.hourly-container {
   width: 100%;
   height: max-content;
   display: flex;
