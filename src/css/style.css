@@ -74,6 +74,15 @@ body {
 .hour {
   display: flex;
   flex-direction: column;
+  margin-left: 8px;
+}
+
+.hour:first-of-type {
+  margin-left: 0;
+}
+
+.hour p:first-child {
+  margin-bottom: 4px;
 }
 
 /*User Input*/

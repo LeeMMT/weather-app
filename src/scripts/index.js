@@ -107,6 +107,7 @@ const displayModule = (function () {
     hourlyNowDiv.appendChild(temp)
     hourlyContainer.appendChild(hourlyNowDiv)
 
+    let isAm = false
     let hour = currentHour + 1
 
     for (let i = 1; i < 26; i++) {
@@ -114,7 +115,14 @@ const displayModule = (function () {
       hourlyDiv.classList.add('hour')
 
       const time = document.createElement('p')
-      time.textContent = hour
+      if (hour < 10) {
+        time.textContent = '0' + hour
+      } else if (hour > 24) {
+        hour = 0
+        time.textContent = '0' + hour
+      } else {
+        time.textContent = hour
+      }
 
       const icon = document.createElement('i')
 
@@ -123,7 +131,6 @@ const displayModule = (function () {
 
       hourlyDiv.appendChild(time)
       hourlyDiv.appendChild(temp)
-
       hourlyContainer.appendChild(hourlyDiv)
 
       hour++
