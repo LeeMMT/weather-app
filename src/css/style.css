@@ -63,6 +63,7 @@ body {
 
 #hourly-forecast {
   width: 100%;
+  margin-top: 64px;
 }
 
 .hourly-container {
@@ -74,6 +75,7 @@ body {
 .hour {
   display: flex;
   flex-direction: column;
+  text-align: center;
   margin-left: 8px;
 }
 
