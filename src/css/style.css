@@ -101,6 +101,7 @@ body {
   height: 96px;
   padding: 8px 12px;
   background-color: #a1a1a5;
+  border: solid 1px #28282a;
   display: flex;
   align-items: center;
   justify-content: center;

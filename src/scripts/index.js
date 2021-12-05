@@ -45,8 +45,6 @@ const dataModule = (function () {
       `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=current,minutely,daily,alerts&appid=0b29ad316ae11908404dc3cdb8577d9d`,
     )
     hourlyData[0] = await rawData.json()
-    console.log(hourlyData)
-    //await console.log(hourlyData)
   }
 
   const getHourlyTemp = (index) => {
@@ -159,7 +157,6 @@ const displayModule = (function () {
       const icon = document.createElement('img')
       icon.classList.add('icon')
       let iconPath = '../src/assets/icons/' + getHourlyIconUrl(i)
-      console.log(iconPath)
       icon.src = iconPath
 
       const temp = document.createElement('p')
@@ -175,10 +172,6 @@ const displayModule = (function () {
     hourlyForecast.appendChild(hourlyContainer)
   }
 
-  const getLocation = () => {
-    console.log(geo.getCurrentPosition())
-  }
-
   const displayAllData = async () => {
     displayCity()
     temp.textContent = await displayCurrentTemp()
@@ -192,5 +185,14 @@ const displayModule = (function () {
     await dataModule.storeCurrentWeather()
     await dataModule.storeHourlyTemp()
     displayAllData()
+  })
+
+  window.addEventListener('keypress', async (e) => {
+    if (e.key === 'Enter' && inputEl.value) {
+      dataModule.setCity(inputEl.value)
+      await dataModule.storeCurrentWeather()
+      await dataModule.storeHourlyTemp()
+      displayAllData()
+    }
   })
 })()
