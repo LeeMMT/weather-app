@@ -32,7 +32,6 @@ const dataModule = (function () {
 
   const storeCurrentWeather = async () => {
     currentData[0] = await getCurrentWeather()
-    console.log(currentData)
   }
 
   const getCurrentTemp = () => {
@@ -45,21 +44,35 @@ const dataModule = (function () {
     const rawData = await fetch(
       `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=current,minutely,daily,alerts&appid=0b29ad316ae11908404dc3cdb8577d9d`,
     )
-    hourlyData = await rawData.json()
-    await console.log(hourlyData)
+    hourlyData[0] = await rawData.json()
+    console.log(hourlyData)
+    //await console.log(hourlyData)
   }
 
   const getHourlyTemp = (index) => {
-    return hourlyData.hourly[index]
+    return hourlyData[0].hourly[index]
   }
 
-  return { getCurrentHour, setCity, getCurrentWeather, getCityName, storeHourlyTemp, getCurrentTemp, getHourlyTemp, storeCurrentWeather, currentData }
+  return {
+    getCurrentHour,
+    setCity,
+    getCurrentWeather,
+    getCityName,
+    storeHourlyTemp,
+    getCurrentTemp,
+    getHourlyTemp,
+    storeCurrentWeather,
+    currentData,
+    hourlyData,
+  }
 })()
 
 const displayModule = (function () {
+  const geo = navigator.geolocation
   const city = document.querySelector('#city')
   const description = document.querySelector('#description')
   const temp = document.querySelector('#temp')
+  const mainWeatherContainer = document.querySelector('.main-info-two')
   const inputEl = document.querySelector('#location-input input')
   const submitBtn = document.querySelector('#location-input button')
 
@@ -69,6 +82,21 @@ const displayModule = (function () {
 
   const displayCity = () => {
     city.textContent = dataModule.getCityName()
+  }
+
+  const getCurrentIconUrl = () => {
+    return dataModule.currentData[0].weather[0].icon + '.png'
+  }
+
+  const getHourlyIconUrl = (index) => {
+    return dataModule.hourlyData[0].hourly[index].weather[0].icon + '.png'
+  }
+
+  const displayCurrentWeatherIcon = () => {
+    mainWeatherContainer.innerHTML = ''
+    const icon = document.createElement('img')
+    icon.src = '/src/assets/icons/' + getCurrentIconUrl()
+    mainWeatherContainer.appendChild(icon)
   }
 
   const displayHourlyTemp = (index) => {
@@ -87,7 +115,7 @@ const displayModule = (function () {
     const hourlyForecast = document.querySelector('#hourly-forecast')
     const hourlyContainer = document.createElement('div')
     hourlyContainer.classList.add('hourly-container')
-    if (hourlyForecast.childElement) hourlyForecast.childElement.innerHTML = '' // Wipes old hourly forecast data from DOM
+    hourlyForecast.innerHTML = '' // Wipes old hourly forecast data from DOM
 
     const d = new Date()
     const currentHour = d.getHours()
@@ -98,12 +126,16 @@ const displayModule = (function () {
     const time = document.createElement('p')
     time.textContent = 'Now'
 
-    const icon = document.createElement('i')
+    const icon = document.createElement('img')
+    icon.classList.add('icon')
+    let iconPath = '/src/assets/icons/' + getCurrentIconUrl()
+    icon.src = iconPath
 
     const temp = document.createElement('p')
     temp.textContent = displayCurrentTemp()
 
     hourlyNowDiv.appendChild(time)
+    hourlyNowDiv.appendChild(icon)
     hourlyNowDiv.appendChild(temp)
     hourlyContainer.appendChild(hourlyNowDiv)
 
@@ -124,12 +156,17 @@ const displayModule = (function () {
         time.textContent = hour
       }
 
-      const icon = document.createElement('i')
+      const icon = document.createElement('img')
+      icon.classList.add('icon')
+      let iconPath = '/src/assets/icons/' + getHourlyIconUrl(i)
+      console.log(iconPath)
+      icon.src = iconPath
 
       const temp = document.createElement('p')
       temp.textContent = displayHourlyTemp(i)
 
       hourlyDiv.appendChild(time)
+      hourlyDiv.appendChild(icon)
       hourlyDiv.appendChild(temp)
       hourlyContainer.appendChild(hourlyDiv)
 
@@ -138,11 +175,16 @@ const displayModule = (function () {
     hourlyForecast.appendChild(hourlyContainer)
   }
 
+  const getLocation = () => {
+    console.log(geo.getCurrentPosition())
+  }
+
   const displayAllData = async () => {
     displayCity()
     temp.textContent = await displayCurrentTemp()
+    description.textContent = dataModule.currentData[0].weather[0].description
+    displayCurrentWeatherIcon()
     populateHourlyForecast()
-    //dataModule.getHourlyTemp()
   }
 
   submitBtn.addEventListener('click', async () => {
