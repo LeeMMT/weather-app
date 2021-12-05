@@ -95,7 +95,7 @@ const displayModule = (function () {
   const displayCurrentWeatherIcon = () => {
     mainWeatherContainer.innerHTML = ''
     const icon = document.createElement('img')
-    icon.src = '/src/assets/icons/' + getCurrentIconUrl()
+    icon.src = '../src/assets/icons/' + getCurrentIconUrl()
     mainWeatherContainer.appendChild(icon)
   }
 
@@ -128,7 +128,7 @@ const displayModule = (function () {
 
     const icon = document.createElement('img')
     icon.classList.add('icon')
-    let iconPath = '/src/assets/icons/' + getCurrentIconUrl()
+    let iconPath = '../src/assets/icons/' + getCurrentIconUrl()
     icon.src = iconPath
 
     const temp = document.createElement('p')
@@ -158,7 +158,7 @@ const displayModule = (function () {
 
       const icon = document.createElement('img')
       icon.classList.add('icon')
-      let iconPath = '/src/assets/icons/' + getHourlyIconUrl(i)
+      let iconPath = '../src/assets/icons/' + getHourlyIconUrl(i)
       console.log(iconPath)
       icon.src = iconPath
 
