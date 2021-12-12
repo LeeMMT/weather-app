@@ -47,7 +47,7 @@ const dataModule = (function () {
       document.querySelector('#hourly-forecast').innerHTML = ''
       const msg = document.createElement('p')
       msg.classList.add('centered-msg')
-      msg.textContent = `It looks like we couldn't find "${city}", please check your spelling adn try again.`
+      msg.textContent = `It looks like we couldn't find "${city}", please check your spelling and try again.`
       document.querySelector('#hourly-forecast').appendChild(msg)
       return
     }
