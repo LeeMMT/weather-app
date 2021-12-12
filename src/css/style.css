@@ -64,8 +64,8 @@ body {
   align-items: center;
   justify-content: center;
   padding: 32px;
-  border: solid 1px #28282a;
   background-color: #a1a1a5;
+  border: solid 1px #28282a;
   border-radius: 8px;
   margin-left: -16px;
   z-index: 1;
@@ -138,6 +138,12 @@ img.icon {
   align-items: center;
   justify-content: center;
   background-color: #a1a1a5;
+}
+
+.centered-msg {
+  width: 100%;
+  padding: 4px;
+  text-align: center;
 }
 
 /*User Input*/

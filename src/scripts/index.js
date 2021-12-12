@@ -21,13 +21,17 @@ const dataModule = (function () {
   }
 
   const getCurrentWeather = () => {
-    return new Promise(function (resolve, reject) {
-      const location = city
-      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=0b29ad316ae11908404dc3cdb8577d9d`, { mode: 'cors' })
-        .then((response) => response.json())
-        .then((data) => resolve(data))
-        .catch((error) => console.log(error))
+    const location = city
+    const result = fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=0b29ad316ae11908404dc3cdb8577d9d`, {
+      mode: 'cors',
     })
+      .then((response) => {
+        return response.json()
+      })
+      .then((response) => {
+        return response
+      })
+    return result
   }
 
   const storeCurrentWeather = async () => {
@@ -39,11 +43,20 @@ const dataModule = (function () {
   }
 
   const storeHourlyTemp = async () => {
+    if (currentData[0].cod == '404') {
+      document.querySelector('#hourly-forecast').innerHTML = ''
+      const msg = document.createElement('p')
+      msg.classList.add('centered-msg')
+      msg.textContent = `It looks like we couldn't find "${city}", please check your spelling adn try again.`
+      document.querySelector('#hourly-forecast').appendChild(msg)
+      return
+    }
     const lat = currentData[0].coord.lat
     const lon = currentData[0].coord.lon
     const rawData = await fetch(
       `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=current,minutely,daily,alerts&appid=0b29ad316ae11908404dc3cdb8577d9d`,
     )
+
     hourlyData[0] = await rawData.json()
   }
 
@@ -73,6 +86,11 @@ const displayModule = (function () {
   const mainWeatherContainer = document.querySelector('.main-info-two')
   const inputEl = document.querySelector('#location-input input')
   const submitBtn = document.querySelector('#location-input button')
+
+  const checkUserInput = () => {
+    console.log(dataModule.currentData)
+    console.log('fired')
+  }
 
   const roundTemp = (temp) => {
     return Math.floor(temp)
@@ -178,6 +196,7 @@ const displayModule = (function () {
     description.textContent = dataModule.currentData[0].weather[0].description
     displayCurrentWeatherIcon()
     populateHourlyForecast()
+    checkUserInput()
   }
 
   submitBtn.addEventListener('click', async () => {
